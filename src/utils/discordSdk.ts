@@ -3,7 +3,7 @@ import { DiscordSDK } from "@discord/embedded-app-sdk";
 let sdk: DiscordSDK | null = null;
 
 const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-
+console.log("Client ID de Discord desde env:", clientId);
 export const initDiscordSdk = async () => {
   try {
     sdk = new DiscordSDK(clientId);
