@@ -29,7 +29,6 @@ const Game = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Pokemon[]>([]);
   const [guesses, setGuesses] = useState<GuessRow[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isWon, setIsWon] = useState(false);
 
   useEffect(() => {
@@ -137,12 +136,6 @@ const Game = () => {
             placeholder="Nombre del Pokémon..."
             className="w-full p-5 rounded-2xl bg-gray-900 border-2 border-primary text-white outline-none focus:ring-4 focus:ring-primary/20 transition-all"
           />
-
-          {isLoading && (
-            <div className="absolute right-4 top-5 text-gray-500 text-sm animate-pulse">
-              Buscando...
-            </div>
-          )}
 
           {suggestions.length > 0 && (
             <div className="absolute z-10 w-full bg-gray-800 mt-2 rounded-xl border border-primary shadow-2xl max-h-60 overflow-y-auto">
