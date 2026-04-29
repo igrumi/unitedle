@@ -184,7 +184,7 @@ const Game = () => {
 
   return (
     <div className="w-full max-w-5xl mt-10">
-      {isWon && <VictoryScreen guesses={guesses} />}
+      {isWon && <VictoryScreen guesses={guesses} winner={winner} />}
       <div className="text-center mb-10">
         <Logo className="mb-4" />
         <Title />
