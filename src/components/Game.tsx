@@ -28,15 +28,55 @@ const Game = () => {
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Pokemon[]>([]);
-  const [guesses, setGuesses] = useState<GuessRow[]>([]);
-  const [isWon, setIsWon] = useState(false);
+  const [winsCount, setWinsCount] = useState<number | null>(null);
+  const today = new Date().toISOString().split("T")[0];
+  const savedData = JSON.parse(localStorage.getItem(`won_${today}`) || "{}");
+  const [isWon, setIsWon] = useState(!!savedData.isWon);
+  const [guesses, setGuesses] = useState<GuessRow[]>(savedData.guesses || []);
+  const [winner, setWinner] = useState<Pokemon | null>(
+    savedData.winner || null,
+  );
+
+  const registerWin = async (pokemonId: number) => {
+    const { error } = await supabase
+      .from("daily_wins")
+      .insert([{ pokemon_id: pokemonId }]);
+
+    if (error) {
+      console.error("Error guardando victoria:", error);
+    } else {
+      const freshCount = await getDailyWinsCount();
+      setWinsCount(freshCount);
+    }
+  };
+
+  const getDailyWinsCount = async () => {
+    const today = new Date().toISOString().split("T")[0];
+    const { count, error } = await supabase
+      .from("daily_wins")
+      .select("*", { count: "exact", head: true })
+      .eq("win_date", today);
+
+    if (error) {
+      console.error("Error obteniendo conteo de victorias:", error);
+      return 0;
+    }
+    return count || 0;
+  };
 
   useEffect(() => {
     const loadAllData = async () => {
       const { data } = await supabase.from("pokemon_unite").select("*");
       if (data) setAllPokemon(data);
     };
+
+    const loadWins = async () => {
+      const count = await getDailyWinsCount();
+      setWinsCount(count);
+    };
+
     loadAllData();
+    loadWins();
   }, []);
 
   useEffect(() => {
@@ -72,20 +112,24 @@ const Game = () => {
       return;
     }
 
+    const rawData = data as any;
+    const { target_id, ...statsOnly } = rawData;
+
     const newGuess: GuessRow = {
       rowId: Date.now(),
       pokemon: selected,
-      stats: data as ComparisonResult,
+      stats: statsOnly,
     };
+    const updatedGuesses = [newGuess, ...guesses];
 
-    setGuesses([newGuess, ...guesses]);
+    setGuesses(updatedGuesses);
+
+    if (Object.values(statsOnly).every((s: any) => s.status === "correct")) {
+      handleWin(target_id, selected, updatedGuesses);
+    }
 
     setInputValue("");
     setSuggestions([]);
-
-    if (Object.values(data).every((s: any) => s.status === "correct")) {
-      handleWin();
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -109,13 +153,33 @@ const Game = () => {
     }
   };
 
-  const handleWin = () => {
+  const handleWin = async (
+    targetId: number,
+    winnerPokemon: Pokemon,
+    finalGuesses: GuessRow[],
+  ) => {
     confetti({
       particleCount: 150,
       spread: 70,
       origin: { y: 0.6 },
     });
+
     setIsWon(true);
+    setWinner(winnerPokemon);
+
+    const today = new Date().toISOString().split("T")[0];
+
+    const winData = {
+      isWon: true,
+      guesses: finalGuesses,
+      winner: winnerPokemon,
+    };
+
+    const alreadyWon = localStorage.getItem(`won_${today}`);
+    if (!alreadyWon) {
+      await registerWin(targetId);
+      localStorage.setItem(`won_${today}`, JSON.stringify(winData));
+    }
   };
 
   return (
@@ -127,6 +191,32 @@ const Game = () => {
         <p className="text-gray-400 mt-2 text-lg italic">
           Adivina el Pokémon del día
         </p>
+        <div className="flex justify-center mt-2 h-8 items-center">
+          {" "}
+          <AnimatePresence mode="wait">
+            {winsCount === null ? (
+              <motion.div
+                key="skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="h-5 w-48 bg-emerald-400/20 animate-pulse rounded-full"
+              />
+            ) : (
+              <motion.p
+                key="count"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-emerald-400 font-bold"
+              >
+                {winsCount === 0
+                  ? "¡Sé el primero en adivinar el Pokémon de hoy!"
+                  : `¡${winsCount} ${winsCount === 1 ? "persona ha" : "personas han"} adivinado el Pokémon de hoy!`}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
       {!isWon && (
         <form onSubmit={handleSubmit} className="relative mb-12">
