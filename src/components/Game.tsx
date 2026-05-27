@@ -4,10 +4,11 @@ import { ArrowUp, ArrowDown } from "lucide-react";
 import confetti from "canvas-confetti";
 import { type Pokemon, type ComparisonResult } from "../utils/gameLogic";
 import { VictoryScreen } from "./VictoryScreen";
-import { supabase } from "../utils/supabaseClient";
+import { signInWithDiscord, supabase } from "../utils/supabaseClient";
 import { Logo } from "./Logo";
 import { Title } from "./Title";
-
+import { DiscordIcon } from "./DiscordIcon";
+import { Leaderboard } from "./Leaderboard";
 interface GuessRow {
   rowId: number;
   pokemon: Pokemon;
@@ -24,7 +25,7 @@ const headers = [
   "Etapa evolutiva",
 ];
 
-const Game = () => {
+const Game = ({ user }: { user: any }) => {
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Pokemon[]>([]);
@@ -36,11 +37,16 @@ const Game = () => {
   const [winner, setWinner] = useState<Pokemon | null>(
     savedData.winner || null,
   );
+  const [showGlobalLeaderboard, setShowGlobalLeaderboard] = useState(false);
 
-  const registerWin = async (pokemonId: number) => {
-    const { error } = await supabase
-      .from("daily_wins")
-      .insert([{ pokemon_id: pokemonId }]);
+  const registerWin = async (pokemonId: number, attempts: number) => {
+    const { error } = await supabase.from("daily_wins").insert([
+      {
+        pokemon_id: pokemonId,
+        user_id: user?.id || null,
+        attempts: attempts,
+      },
+    ]);
 
     if (error) {
       console.error("Error guardando victoria:", error);
@@ -177,22 +183,58 @@ const Game = () => {
 
     const alreadyWon = localStorage.getItem(`won_${today}`);
     if (!alreadyWon) {
-      await registerWin(targetId);
+      await registerWin(targetId, finalGuesses.length);
       localStorage.setItem(`won_${today}`, JSON.stringify(winData));
     }
   };
 
   return (
     <div className="w-full max-w-5xl mt-10">
-      {isWon && <VictoryScreen guesses={guesses} winner={winner} />}
-      <div className="text-center mb-10">
-        <Logo className="mb-4" />
+      {isWon && <VictoryScreen guesses={guesses} winner={winner} user={user} />}
+
+      <div className="text-center mb-10 relative">
+        {/* Contenedor del Logo y Botón */}
+        <div className="flex flex-col items-center justify-center relative">
+          <Logo className="mb-4" />
+
+          {/* Botón posicionado al lado del Logo en pantallas grandes */}
+          {!user && !isWon && (
+            <div className="md:absolute md:right-20 md:top-1/2 md:-translate-y-1/2 mt-4 md:mt-0">
+              <button
+                onClick={signInWithDiscord}
+                className="group flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white text-[11px] font-black px-5 py-2.5 rounded-full transition-all shadow-lg hover:shadow-[#5865F2]/30 border border-white/10 uppercase tracking-widest active:scale-95"
+              >
+                <DiscordIcon className="w-4 h-4 transition-transform group-hover:rotate-12" />
+                <span>Guardar racha</span>
+              </button>
+            </div>
+          )}
+          {/* 2. BOTÓN DE LEADERBOARD (Nuevo: Acceso rápido) */}
+          <div className="md:absolute md:left-20 md:top-1/2 md:-translate-y-1/2 mt-2 md:mt-0">
+            <button
+              onClick={() => setShowGlobalLeaderboard(true)}
+              className="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500 text-yellow-500 hover:text-black text-[11px] font-black px-4 py-2 rounded-full transition-all border border-yellow-500/20 uppercase"
+            >
+              🏆 <span className="hidden sm:inline">Ver Ranking</span>
+            </button>
+          </div>
+        </div>
+
         <Title />
+
         <p className="text-gray-400 mt-2 text-lg italic">
           Adivina el Pokémon del día
         </p>
-        <div className="flex justify-center mt-2 h-8 items-center">
-          {" "}
+
+        {/* 3. PEQUEÑO RECORD DEL DÍA (Sutil) */}
+        <p className="text-gray-500 text-[10px] uppercase tracking-[0.3em] mt-4">
+          Récord de hoy:{" "}
+          <span className="text-yellow-500 font-bold">3 intentos</span> por{" "}
+          <span className="text-white">EntrenadorX</span>
+        </p>
+
+        {/* Contador de victorias */}
+        <div className="flex justify-center mt-4 h-8 items-center">
           <AnimatePresence mode="wait">
             {winsCount === null ? (
               <motion.div
@@ -207,7 +249,6 @@ const Game = () => {
                 key="count"
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
                 className="text-emerald-400 font-bold"
               >
                 {winsCount === 0
@@ -296,6 +337,23 @@ const Game = () => {
           </div>
         </div>
       </div>
+      {showGlobalLeaderboard && (
+        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-gray-900 border-2 border-yellow-500/50 p-8 rounded-3xl max-w-sm w-full relative shadow-[0_0_50px_-12px_rgba(234,179,8,0.3)]"
+          >
+            <button
+              onClick={() => setShowGlobalLeaderboard(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white font-bold"
+            >
+              ✕
+            </button>
+            <Leaderboard />
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
