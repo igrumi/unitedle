@@ -8,4 +8,18 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Faltan las variables de entorno de Supabase. Revisa tu archivo .env");
 }
 
+export const signInWithDiscord = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'discord',
+    options: {
+      redirectTo: window.location.origin, 
+    },
+  });
+  if (error) console.error("Error Discord Login:", error.message);
+};
+
+export const signOut = async () => {
+  await supabase.auth.signOut();
+};
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
