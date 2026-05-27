@@ -9,6 +9,7 @@ import { Logo } from "./Logo";
 import { Title } from "./Title";
 import { DiscordIcon } from "./DiscordIcon";
 import { Leaderboard } from "./Leaderboard";
+import { getChileTodayISO } from "../utils/date";
 interface GuessRow {
   rowId: number;
   pokemon: Pokemon;
@@ -30,7 +31,7 @@ const Game = ({ user }: { user: any }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Pokemon[]>([]);
   const [winsCount, setWinsCount] = useState<number | null>(null);
-  const today = new Date().toISOString().split("T")[0];
+  const today = getChileTodayISO();
   const savedData = JSON.parse(localStorage.getItem(`won_${today}`) || "{}");
   const [isWon, setIsWon] = useState(!!savedData.isWon);
   const [guesses, setGuesses] = useState<GuessRow[]>(savedData.guesses || []);
@@ -45,6 +46,7 @@ const Game = ({ user }: { user: any }) => {
         pokemon_id: pokemonId,
         user_id: user?.id || null,
         attempts: attempts,
+        win_date: today,
       },
     ]);
 
@@ -57,7 +59,6 @@ const Game = ({ user }: { user: any }) => {
   };
 
   const getDailyWinsCount = async () => {
-    const today = new Date().toISOString().split("T")[0];
     const { count, error } = await supabase
       .from("daily_wins")
       .select("*", { count: "exact", head: true })
@@ -172,8 +173,6 @@ const Game = ({ user }: { user: any }) => {
 
     setIsWon(true);
     setWinner(winnerPokemon);
-
-    const today = new Date().toISOString().split("T")[0];
 
     const winData = {
       isWon: true,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabaseClient";
+import { getChileTodayISO } from "../utils/date";
 
 export const Leaderboard = () => {
   const [topEntries, setTopEntries] = useState<any[]>([]);
@@ -7,7 +8,7 @@ export const Leaderboard = () => {
 
   useEffect(() => {
     const fetchTop5 = async () => {
-      const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Santiago' });
+      const today = getChileTodayISO();
       
       const { data, error } = await supabase
         .from("leaderboard_view") // Usamos nuestra nueva vista
