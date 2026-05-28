@@ -9,6 +9,7 @@ interface SavedWinData {
   isWon?: boolean;
   guesses?: GuessRow[];
   winner?: Pokemon;
+  attempts?: number | null;
   dailyWinId?: number | null;
   leaderboardWinId?: number | null;
   leaderboardUserId?: string | null;
@@ -33,6 +34,9 @@ export function useGame(user: { id: string } | null) {
   const [isWon, setIsWon] = useState(!!savedData.isWon);
   const [guesses, setGuesses] = useState<GuessRow[]>(savedData.guesses || []);
   const [winner, setWinner] = useState<Pokemon | null>(savedData.winner || null);
+  const [attempts, setAttempts] = useState<number | null>(
+    savedData.attempts ?? savedData.guesses?.length ?? null,
+  );
   const [showGlobalLeaderboard, setShowGlobalLeaderboard] = useState(false);
 
   const getDailyWinsCount = useCallback(async () => {
@@ -127,6 +131,70 @@ export function useGame(user: { id: string } | null) {
     claimSavedWin();
   }, [getDailyWinsCount, savedData, today, user?.id]);
 
+  useEffect(() => {
+    if (!user?.id || savedData.isWon) return;
+
+    let cancelled = false;
+
+    const loadExistingUserWin = async () => {
+      const { data, error } = await supabase
+        .from("daily_wins")
+        .select("id, pokemon_id, attempts")
+        .eq("user_id", user.id)
+        .eq("win_date", today)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error revisando victoria del usuario:", error);
+        return;
+      }
+
+      if (!data || cancelled) return;
+
+      let winningPokemon =
+        allPokemon.find((pokemon) => pokemon.id === Number(data.pokemon_id)) ??
+        null;
+
+      if (!winningPokemon) {
+        const { data: pokemonData, error: pokemonError } = await supabase
+          .from("pokemon_unite")
+          .select("*")
+          .eq("id", data.pokemon_id)
+          .single();
+
+        if (pokemonError) {
+          console.error("Error cargando Pokémon ganador:", pokemonError);
+        } else {
+          winningPokemon = pokemonData as Pokemon;
+        }
+      }
+
+      if (cancelled) return;
+
+      const savedServerWin: SavedWinData = {
+        isWon: true,
+        guesses: [],
+        winner: winningPokemon ?? undefined,
+        attempts: data.attempts,
+        dailyWinId: data.id,
+        leaderboardWinId: data.id,
+        leaderboardUserId: user.id,
+      };
+
+      setIsWon(true);
+      setGuesses([]);
+      setWinner(winningPokemon);
+      setAttempts(data.attempts);
+      localStorage.setItem(`won_${today}`, JSON.stringify(savedServerWin));
+    };
+
+    loadExistingUserWin();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [allPokemon, savedData.isWon, today, user?.id]);
+
   const suggestions = useMemo(() => {
     if (inputValue.trim().length === 0) {
       return [];
@@ -154,11 +222,13 @@ export function useGame(user: { id: string } | null) {
 
     setIsWon(true);
     setWinner(winnerPokemon);
+    setAttempts(finalGuesses.length);
 
     const winData = {
       isWon: true,
       guesses: finalGuesses,
       winner: winnerPokemon,
+      attempts: finalGuesses.length,
     };
 
     const alreadyWon = localStorage.getItem(`won_${today}`);
@@ -225,6 +295,7 @@ export function useGame(user: { id: string } | null) {
     isWon,
     guesses,
     winner,
+    attempts,
     winsCount,
     inputValue,
     setInputValue,
