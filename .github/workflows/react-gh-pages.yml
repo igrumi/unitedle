@@ -14,38 +14,139 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-      
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: "./dist"
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  notify:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create deploy summary
+        id: summary
+        shell: bash
+        run: |
+          if [ "${{ needs.build.result }}" != "success" ]; then
+            STATUS="error"
+            TITLE="Deploy fallido"
+            COLOR="15158332"
+          elif [ "${{ needs.deploy.result }}" != "success" ]; then
+            STATUS="error"
+            TITLE="Deploy fallido"
+            COLOR="15158332"
+          else
+            STATUS="success"
+            TITLE="Deploy exitoso"
+            COLOR="3066993"
+          fi
+
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          if git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            CHANGES=$(git log --pretty=format:"- %s (%h)" "$BEFORE..$AFTER" | head -n 10)
+          else
+            CHANGES=$(git log --pretty=format:"- %s (%h)" -n 10 "$AFTER")
+          fi
+
+          if [ -z "$CHANGES" ]; then
+            CHANGES="- Sin cambios detectados"
+          fi
+
+          {
+            echo "status=$STATUS"
+            echo "title=$TITLE"
+            echo "color=$COLOR"
+            echo "changes<<EOF"
+            echo "$CHANGES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TITLE: ${{ steps.summary.outputs.title }}
+          COLOR: ${{ steps.summary.outputs.color }}
+          CHANGES: ${{ steps.summary.outputs.changes }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          SHORT_SHA="${SHA:0:7}"
+
+          jq -n \
+            --arg title "$TITLE" \
+            --arg repo "$REPO" \
+            --arg sha "$SHORT_SHA" \
+            --arg actor "$ACTOR" \
+            --arg build "$BUILD_RESULT" \
+            --arg deploy "$DEPLOY_RESULT" \
+            --arg changes "$CHANGES" \
+            --arg run_url "$RUN_URL" \
+            --argjson color "$COLOR" \
+            '{
+              embeds: [{
+                title: $title,
+                color: $color,
+                fields: [
+                  { name: "Repositorio", value: $repo, inline: true },
+                  { name: "Commit", value: $sha, inline: true },
+                  { name: "Autor", value: $actor, inline: true },
+                  { name: "Build", value: $build, inline: true },
+                  { name: "Deploy", value: $deploy, inline: true },
+                  { name: "Cambios", value: $changes, inline: false }
+                ],
+                url: $run_url
+              }]
+            }' > payload.json
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d @payload.json \
+            "$DISCORD_WEBHOOK_URL"
