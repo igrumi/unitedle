@@ -7,11 +7,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 // Definimos la estructura de las props
 interface VictoryScreenProps {
-  guesses: any[]; 
+  guesses: any[];
   winner: Pokemon | null;
+  user: any;
 }
 
-export const VictoryScreen = ({ guesses, winner, user }: { guesses: any[], winner: any, user: any }) => {
+export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => {
     const [timeLeft, setTimeLeft] = useState('');
     const [view, setView] = useState<'VICTORY' | 'LEADERBOARD'>('VICTORY'); // Control de la "carta"
 
