@@ -1,6 +1,6 @@
 # Unitedle
 
-Unitedle es un juego diario inspirado en Wordle, pero construido alrededor del roster de **Pokemon Unite**. Cada día hay un Pokemon secreto y el objetivo es adivinarlo usando pistas comparativas: rol, evolución, megaevolución, año de lanzamiento, alcance y etapa evolutiva.
+Unitedle es un juego diario inspirado en Wordle, Loldle, Pokédle, entre otros, pero construido alrededor del roster de **Pokemon Unite**. Cada día hay un Pokemon secreto y el objetivo es adivinarlo usando pistas comparativas: rol, evolución, megaevolución, año de lanzamiento, alcance y etapa evolutiva.
 
 La experiencia está pensada para partidas rápidas: eliges un Pokemon, el tablero responde con indicadores de color y flechas, y cada intento te acerca al objetivo del día.
 
