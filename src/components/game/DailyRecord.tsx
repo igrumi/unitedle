@@ -3,9 +3,11 @@ import { fetchTodayLeaderboard } from "../../utils/leaderboard";
 import { type LeaderboardEntry } from "../../types/leaderboard";
 
 interface DailyRecordProps {
-  /** Refresca el récord cuando cambia (p. ej. tras una nueva victoria). */
   refreshKey?: number | null;
 }
+
+const recordTextClass =
+  "mt-4 px-3 text-center text-[9px] uppercase leading-relaxed tracking-[0.18em] text-gray-500 sm:text-[10px] sm:tracking-[0.3em]";
 
 export function DailyRecord({ refreshKey }: DailyRecordProps) {
   const [record, setRecord] = useState<LeaderboardEntry | null>(null);
@@ -31,17 +33,17 @@ export function DailyRecord({ refreshKey }: DailyRecordProps) {
 
   if (loading) {
     return (
-      <p className="text-gray-500 text-[10px] uppercase tracking-[0.3em] mt-4">
+      <p className={recordTextClass}>
         Récord de hoy:{" "}
-        <span className="inline-block h-3 w-24 bg-white/10 animate-pulse rounded align-middle" />
+        <span className="inline-block h-3 w-24 rounded bg-white/10 align-middle animate-pulse" />
       </p>
     );
   }
 
   if (!record) {
     return (
-      <p className="text-gray-500 text-[10px] uppercase tracking-[0.3em] mt-4">
-        Aún no hay récord hoy — ¡sé el primero!
+      <p className={recordTextClass}>
+        Aún no hay récord hoy - ¡sé el primero!
       </p>
     );
   }
@@ -51,9 +53,9 @@ export function DailyRecord({ refreshKey }: DailyRecordProps) {
   const playerName = record.user_name?.trim() || "Anónimo";
 
   return (
-    <p className="text-gray-500 text-[10px] uppercase tracking-[0.3em] mt-4">
+    <p className={recordTextClass}>
       Récord de hoy:{" "}
-      <span className="text-yellow-500 font-bold">{attemptsLabel}</span> por{" "}
+      <span className="font-bold text-yellow-500">{attemptsLabel}</span> por{" "}
       <span className="text-white">{playerName}</span>
     </p>
   );

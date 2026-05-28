@@ -7,11 +7,11 @@ interface LeaderboardModalProps {
 
 export function LeaderboardModal({ onClose }: LeaderboardModalProps) {
   return (
-    <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-sm">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-gray-900 border-2 border-yellow-500/50 p-8 rounded-3xl max-w-sm w-full relative shadow-[0_0_50px_-12px_rgba(234,179,8,0.3)]"
+        className="relative max-h-[calc(100vh-2rem)] w-full max-w-sm overflow-y-auto rounded-2xl border-2 border-yellow-500/50 bg-gray-900 p-5 shadow-[0_0_50px_-12px_rgba(234,179,8,0.3)] sm:p-8"
       >
         <button
           onClick={onClose}

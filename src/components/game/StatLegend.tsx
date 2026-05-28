@@ -10,10 +10,10 @@ function LegendItem({
   icon?: React.ReactNode;
 }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-1">
-      <span className={`w-2 h-2 rounded-full ${dotClassName}`} />
+    <span className="inline-flex min-h-9 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+      <span className={`h-2 w-2 shrink-0 rounded-full ${dotClassName}`} />
       {icon}
-      <span className="text-[10px] text-gray-300 uppercase tracking-widest">
+      <span className="text-[9px] uppercase tracking-wide text-gray-300 sm:text-[10px] sm:tracking-widest">
         {label}
       </span>
     </span>
@@ -22,8 +22,8 @@ function LegendItem({
 
 export function StatLegend() {
   return (
-    <div className="mt-3 mb-1 w-full">
-      <div className="flex flex-wrap items-center justify-center gap-3 px-2">
+    <div className="mb-1 mt-3 w-full">
+      <div className="mx-auto grid max-w-sm grid-cols-2 gap-2 px-1 sm:flex sm:max-w-none sm:flex-wrap sm:items-center sm:justify-center sm:gap-3 sm:px-2">
         <LegendItem dotClassName="bg-emerald-600/80" label="Correcto" />
         <LegendItem dotClassName="bg-rose-600/80" label="Incorrecto" />
         <LegendItem

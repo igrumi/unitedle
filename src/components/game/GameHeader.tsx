@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { Trophy } from "lucide-react";
 import { signInWithDiscord } from "../../utils/supabaseClient";
 import { Logo } from "../Logo";
 import { Title } from "../Title";
@@ -19,37 +20,34 @@ export function GameHeader({
   onOpenLeaderboard,
 }: GameHeaderProps) {
   return (
-    <div className="text-center mb-10 relative">
-      <div className="flex flex-col items-center justify-center relative">
-        <Logo className="mb-4" />
+    <div className="relative mb-7 pt-1 text-center sm:mb-10">
+      <button
+        onClick={onOpenLeaderboard}
+        aria-label="Ver ranking"
+        title="Ver ranking"
+        className="absolute left-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-500/25 bg-yellow-500/10 text-yellow-400 shadow-lg transition-all hover:bg-yellow-500 hover:text-black active:scale-95 sm:h-11 sm:w-11"
+      >
+        <Trophy size={15} />
+      </button>
 
-        {!user && !isWon && (
-          <div className="md:absolute md:right-20 md:top-1/2 md:-translate-y-1/2 mt-4 md:mt-0">
-            <button
-              onClick={signInWithDiscord}
-              className="group flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white text-[11px] font-black px-5 py-2.5 rounded-full transition-all shadow-lg hover:shadow-[#5865F2]/30 border border-white/10 uppercase tracking-widest active:scale-95"
-            >
-              <DiscordIcon className="w-4 h-4 transition-transform group-hover:rotate-12" />
-              <span>Guardar racha</span>
-            </button>
-          </div>
-        )}
+      {!user && !isWon && (
+        <button
+          onClick={signInWithDiscord}
+          aria-label="Iniciar sesión con Discord"
+          title="Iniciar sesión con Discord"
+          className="group absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#5865F2] text-white shadow-lg transition-all hover:bg-[#4752C4] hover:shadow-[#5865F2]/30 active:scale-95 sm:h-11 sm:w-11"
+        >
+          <DiscordIcon className="h-4 w-4 transition-transform group-hover:rotate-12" />
+        </button>
+      )}
 
-        <div className="md:absolute md:left-20 md:top-1/2 md:-translate-y-1/2 mt-2 md:mt-0">
-          <button
-            onClick={onOpenLeaderboard}
-            className="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500 text-yellow-500 hover:text-black text-[11px] font-black px-4 py-2 rounded-full transition-all border border-yellow-500/20 uppercase"
-          >
-            🏆 <span className="hidden sm:inline">Ver Ranking</span>
-          </button>
-        </div>
-      </div>
+      <Logo className="mb-4" />
 
       <Title />
 
       <DailyRecord refreshKey={winsCount} />
 
-      <div className="flex justify-center mt-4 h-8 items-center">
+      <div className="mt-4 flex min-h-8 items-center justify-center px-3">
         <AnimatePresence mode="wait">
           {winsCount === null ? (
             <motion.div
@@ -57,14 +55,14 @@ export function GameHeader({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="h-5 w-48 bg-emerald-400/20 animate-pulse rounded-full"
+              className="h-5 w-48 rounded-full bg-emerald-400/20 animate-pulse"
             />
           ) : (
             <motion.p
               key="count"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-emerald-400 font-bold"
+              className="text-center text-sm font-bold leading-snug text-emerald-400 sm:text-base"
             >
               {winsCount === 0
                 ? "¡Sé el primero en adivinar el Pokémon de hoy!"

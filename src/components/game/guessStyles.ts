@@ -2,7 +2,7 @@ import { type StatComparison } from "../../utils/gameLogic";
 
 export function getBoxStyle(status: StatComparison["status"]): string {
   const baseStyle =
-    "flex items-center justify-center gap-1 rounded-xl font-bold text-sm h-full shadow-lg border border-white/5 transition-colors";
+    "flex h-full items-center justify-center gap-1 rounded-xl border border-white/5 px-1 text-center text-xs font-bold leading-tight shadow-lg transition-colors sm:text-sm";
 
   switch (status) {
     case "correct":
