@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { fetchTodayLeaderboard } from "../utils/leaderboard";
 import { type LeaderboardEntry } from "../types/leaderboard";
 
+const topRankBadges = [
+  { src: "/rank_legend.webp", alt: "Rango Legend" },
+  { src: "/rank_master.webp", alt: "Rango Master" },
+  { src: "/rank_ultra.webp", alt: "Rango Ultra" },
+];
+
 export const Leaderboard = () => {
   const [topEntries, setTopEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,13 +41,17 @@ export const Leaderboard = () => {
             className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 transition-colors hover:border-yellow-500/30"
           >
             <div className="flex min-w-0 items-center gap-3">
-              <span
-                className={`w-5 shrink-0 font-black ${
-                  i === 0 ? "text-yellow-400" : "text-gray-600"
-                }`}
-              >
-                {i + 1}
-              </span>
+              {topRankBadges[i] ? (
+                <img
+                  src={topRankBadges[i].src}
+                  alt={topRankBadges[i].alt}
+                  className="h-8 w-8 shrink-0 object-contain"
+                />
+              ) : (
+                <span className="w-8 shrink-0 text-center font-black text-gray-600">
+                  {i + 1}
+                </span>
+              )}
               {entry.user_avatar && (
                 <img
                   src={entry.user_avatar}
