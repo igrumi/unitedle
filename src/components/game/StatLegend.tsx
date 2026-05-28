@@ -32,9 +32,9 @@ export function StatLegend() {
           icon={<ArrowUp size={14} className="text-amber-200" />}
         />
         <LegendItem
-          dotClassName="bg-sky-500/80"
+          dotClassName="bg-amber-500/80"
           label="Más bajo"
-          icon={<ArrowDown size={14} className="text-sky-200" />}
+          icon={<ArrowDown size={14} className="text-amber-200" />}
         />
       </div>
     </div>

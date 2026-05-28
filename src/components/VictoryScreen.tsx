@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { type Pokemon } from '../utils/gameLogic'; // Asegúrate de que la ruta sea correcta
+import { type Pokemon } from '../utils/gameLogic';
 import { DiscordIcon } from './DiscordIcon';
 import { signInWithDiscord } from '../utils/supabaseClient';
 import { Leaderboard } from './Leaderboard';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// Definimos la estructura de las props
 interface VictoryScreenProps {
   guesses: any[];
   winner: Pokemon | null;
@@ -14,7 +13,7 @@ interface VictoryScreenProps {
 
 export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => {
     const [timeLeft, setTimeLeft] = useState('');
-    const [view, setView] = useState<'VICTORY' | 'LEADERBOARD'>('VICTORY'); // Control de la "carta"
+    const [view, setView] = useState<'VICTORY' | 'LEADERBOARD'>('VICTORY');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -31,7 +30,7 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
     return () => clearInterval(timer);
   }, []);
 
-  // Usamos 'winner' si existe, si no, usamos el fallback del primer intento
+  // Se usa 'winner' si existe, si no, usamos el fallback del primer intento
   const displayedName = winner?.name || guesses[0]?.pokemon.name;
   const displayedImage = winner?.image_url || guesses[0]?.pokemon.image_url;
 
@@ -53,7 +52,6 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
               <img src={displayedImage} className="mx-auto my-4 w-32 h-32 object-contain rounded-2xl bg-gray-800/50 p-2" />
               <p className="text-gray-400 mb-6">Adivinaste en <span className="text-white font-bold">{guesses.length}</span> intentos.</p>
 
-              {/* Botón para ver Leaderboard */}
               <button 
                 onClick={() => setView('LEADERBOARD')}
                 className="w-full mb-4 bg-yellow-500 hover:bg-yellow-600 text-black font-black py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2"
@@ -64,7 +62,7 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
               {!user && (
                 <div className="mt-4 p-4 bg-white/5 rounded-2xl border border-white/10">
                   <button onClick={signInWithDiscord} className="w-full flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-2 rounded-xl transition-all">
-                    <DiscordIcon className="w-4 h-4" /> Guardar progreso
+                    <DiscordIcon className="w-4 h-4" /> Guardar en ranking
                   </button>
                 </div>
               )}
