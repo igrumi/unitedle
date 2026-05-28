@@ -1,13 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import confetti from "canvas-confetti";
 import { type Pokemon, type ComparisonResult } from "../utils/gameLogic";
 import { supabase } from "../utils/supabaseClient";
 import { getChileTodayISO } from "../utils/date";
 import { type GuessRow } from "../components/game/types";
 
+interface SavedWinData {
+  isWon?: boolean;
+  guesses?: GuessRow[];
+  winner?: Pokemon;
+  dailyWinId?: number | null;
+  leaderboardWinId?: number | null;
+  leaderboardUserId?: string | null;
+}
+
+function loadSavedWinData(today: string): SavedWinData {
+  try {
+    return JSON.parse(localStorage.getItem(`won_${today}`) || "{}");
+  } catch {
+    return {};
+  }
+}
+
 export function useGame(user: { id: string } | null) {
   const today = getChileTodayISO();
-  const savedData = JSON.parse(localStorage.getItem(`won_${today}`) || "{}");
+  const savedData = loadSavedWinData(today);
+  const syncKeyRef = useRef<string | null>(null);
 
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -18,7 +36,7 @@ export function useGame(user: { id: string } | null) {
   const [winner, setWinner] = useState<Pokemon | null>(savedData.winner || null);
   const [showGlobalLeaderboard, setShowGlobalLeaderboard] = useState(false);
 
-  const getDailyWinsCount = async () => {
+  const getDailyWinsCount = useCallback(async () => {
     const { count, error } = await supabase
       .from("daily_wins")
       .select("*", { count: "exact", head: true })
@@ -29,23 +47,29 @@ export function useGame(user: { id: string } | null) {
       return 0;
     }
     return count || 0;
-  };
+  }, [today]);
 
   const registerWin = async (pokemonId: number, attempts: number) => {
-    const { error } = await supabase.from("daily_wins").insert([
-      {
-        pokemon_id: pokemonId,
-        user_id: user?.id || null,
-        attempts,
-        win_date: today,
-      },
-    ]);
+    const { data, error } = await supabase
+      .from("daily_wins")
+      .insert([
+        {
+          pokemon_id: pokemonId,
+          user_id: user?.id || null,
+          attempts,
+          win_date: today,
+        },
+      ])
+      .select("id")
+      .single();
 
     if (error) {
       console.error("Error guardando victoria:", error);
+      return null;
     } else {
       const freshCount = await getDailyWinsCount();
       setWinsCount(freshCount);
+      return data.id as number;
     }
   };
 
@@ -62,7 +86,47 @@ export function useGame(user: { id: string } | null) {
 
     loadAllData();
     loadWins();
-  }, []);
+  }, [getDailyWinsCount]);
+
+  useEffect(() => {
+    if (!user?.id || !savedData.isWon) return;
+    if (savedData.leaderboardUserId || savedData.leaderboardWinId) return;
+
+    const pokemonId = savedData.winner?.id ?? savedData.guesses?.[0]?.pokemon?.id;
+    const attempts = savedData.guesses?.length;
+    if (!pokemonId || !attempts) return;
+
+    const syncKey = `${today}:${user.id}:${pokemonId}:${attempts}`;
+    if (syncKeyRef.current === syncKey) return;
+    syncKeyRef.current = syncKey;
+
+    const claimSavedWin = async () => {
+      const { data, error } = await supabase.rpc("claim_daily_win_after_login", {
+        p_anonymous_win_id: savedData.dailyWinId ?? null,
+        p_pokemon_id: pokemonId,
+        p_attempts: attempts,
+        p_win_date: today,
+      });
+
+      if (error) {
+        console.error("Error guardando victoria en leaderboard:", error);
+        syncKeyRef.current = null;
+        return;
+      }
+
+      const updatedWinData: SavedWinData = {
+        ...savedData,
+        leaderboardWinId: data as number,
+        leaderboardUserId: user.id,
+      };
+      localStorage.setItem(`won_${today}`, JSON.stringify(updatedWinData));
+
+      const freshCount = await getDailyWinsCount();
+      setWinsCount(freshCount);
+    };
+
+    claimSavedWin();
+  }, [getDailyWinsCount, savedData, today, user?.id]);
 
   useEffect(() => {
     if (inputValue.trim().length === 0) {
@@ -103,8 +167,16 @@ export function useGame(user: { id: string } | null) {
 
     const alreadyWon = localStorage.getItem(`won_${today}`);
     if (!alreadyWon) {
-      await registerWin(targetId, finalGuesses.length);
-      localStorage.setItem(`won_${today}`, JSON.stringify(winData));
+      const dailyWinId = await registerWin(targetId, finalGuesses.length);
+      localStorage.setItem(
+        `won_${today}`,
+        JSON.stringify({
+          ...winData,
+          dailyWinId,
+          leaderboardWinId: user?.id ? dailyWinId : null,
+          leaderboardUserId: user?.id ?? null,
+        }),
+      );
     }
   };
 
