@@ -25,11 +25,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[var(--color-dark)] text-white flex flex-col items-center">
-      {/* Botón de Logout / Usuario (Solo visible si está logueado) */}
       {session && (
         <div className="absolute top-4 right-4 flex items-center gap-4 bg-gray-900/50 p-2 rounded-full border border-white/10">
           <img 
-            src={session.user.user_metadata.avatar_url} 
+            src={session.user.user_metadata?.avatar_url ?? ""} 
             alt="Avatar" 
             className="w-8 h-8 rounded-full border border-primary"
           />
@@ -62,7 +61,6 @@ function App() {
                 COMENZAR
               </button>
 
-              {/* Botón de Discord si NO hay sesión */}
               {!session && (
                 <button
                   onClick={signInWithDiscord}
@@ -83,7 +81,6 @@ function App() {
             </div>
           </div>
         ) : (
-          /* Pasamos el usuario al componente Game */
           <Game user={session?.user ?? null} />
         )}
       </div>
