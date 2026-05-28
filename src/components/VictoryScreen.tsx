@@ -11,14 +11,15 @@ interface VictoryScreenProps {
   guesses: GuessRow[];
   winner: Pokemon | null;
   user: User | null;
+  attempts?: number | null;
 }
 
-export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => {
+export const VictoryScreen = ({ guesses, winner, user, attempts }: VictoryScreenProps) => {
     const [timeLeft, setTimeLeft] = useState('');
     const [view, setView] = useState<'VICTORY' | 'LEADERBOARD'>('VICTORY');
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const updateTimeLeft = () => {
       const now = new Date();
       const nextMidnight = new Date();
       nextMidnight.setHours(24, 0, 0, 0); 
@@ -28,13 +29,17 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
       setTimeLeft(`${h}h ${m}m ${s}s`);
-    }, 1000);
+    };
+
+    updateTimeLeft();
+    const timer = setInterval(updateTimeLeft, 1000);
     return () => clearInterval(timer);
   }, []);
 
   // Se usa 'winner' si existe, si no, usamos el fallback del primer intento
-  const displayedName = winner?.name || guesses[0]?.pokemon.name;
+  const displayedName = winner?.name || guesses[0]?.pokemon.name || "Pokemon del dia";
   const displayedImage = winner?.image_url || guesses[0]?.pokemon.image_url;
+  const displayedAttempts = attempts ?? guesses.length;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-950/95 p-4 backdrop-blur-md">
@@ -51,8 +56,10 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
             >
               <h2 className="text-4xl font-black text-white mb-2">¡Victoria!</h2>
               <p className="text-gray-400">Hoy era: <span className="text-white font-bold">{displayedName}</span></p>
-              <img src={displayedImage} className="mx-auto my-4 w-32 h-32 object-contain rounded-2xl bg-gray-800/50 p-2" />
-              <p className="text-gray-400 mb-6">Adivinaste en <span className="text-white font-bold">{guesses.length}</span> intentos.</p>
+              {displayedImage && (
+                <img src={displayedImage} className="mx-auto my-4 w-32 h-32 object-contain rounded-2xl bg-gray-800/50 p-2" />
+              )}
+              <p className="text-gray-400 mb-6">Adivinaste en <span className="text-white font-bold">{displayedAttempts}</span> intentos.</p>
 
               <button 
                 onClick={() => setView('LEADERBOARD')}
@@ -70,7 +77,12 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
               )}
 
               <div className="mt-6 pt-4 border-t border-white/10">
-                <div className="text-2xl font-mono font-black text-white">{timeLeft}</div>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-gray-500">
+                  Próximo Pokémon en
+                </p>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-2xl font-mono font-black text-white">
+                  {timeLeft}
+                </div>
               </div>
             </motion.div>
           ) : (

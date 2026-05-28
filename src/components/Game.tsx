@@ -12,6 +12,7 @@ const Game = ({ user }: { user: User | null }) => {
     isWon,
     guesses,
     winner,
+    attempts,
     winsCount,
     inputValue,
     setInputValue,
@@ -25,7 +26,7 @@ const Game = ({ user }: { user: User | null }) => {
   return (
     <div className="w-full max-w-5xl mt-6 px-4 pb-10 sm:mt-10 sm:px-6 lg:px-0">
       {isWon && (
-        <VictoryScreen guesses={guesses} winner={winner} user={user} />
+        <VictoryScreen guesses={guesses} winner={winner} user={user} attempts={attempts} />
       )}
 
       <GameHeader
