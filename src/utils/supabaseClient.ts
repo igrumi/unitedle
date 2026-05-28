@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Usamos las variables de entorno para no exponer tus llaves en el código
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_KEY;
 
@@ -9,3 +8,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export const signInWithDiscord = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'discord',
+    options: {
+      redirectTo: window.location.origin, 
+    },
+  });
+  if (error) console.error("Error Discord Login:", error.message);
+};
+
+export const signOut = async () => {
+  await supabase.auth.signOut();
+};
