@@ -16,21 +16,21 @@ export function PokemonGuessForm({
   onSubmit,
 }: PokemonGuessFormProps) {
   return (
-    <form onSubmit={onSubmit} className="relative mb-12">
+    <form onSubmit={onSubmit} className="relative mb-8 sm:mb-12">
       <input
         value={inputValue}
         onChange={(e) => onInputChange(e.target.value)}
         placeholder="Adivina el Pokémon del día..."
-        className="w-full p-5 rounded-2xl bg-gray-900 border-2 border-primary text-white outline-none focus:ring-4 focus:ring-primary/20 transition-all"
+        className="w-full rounded-2xl border-2 border-primary bg-gray-900 p-4 text-base text-white outline-none transition-all focus:ring-4 focus:ring-primary/20 sm:p-5"
       />
 
       {suggestions.length > 0 && (
-        <div className="absolute z-10 w-full bg-gray-800 mt-2 rounded-xl border border-primary shadow-2xl max-h-60 overflow-y-auto">
+        <div className="absolute z-40 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-primary bg-gray-800 shadow-2xl">
           {suggestions.map((p) => (
             <div
               key={p.id}
               onClick={() => onSelectPokemon(p)}
-              className="p-3 hover:bg-primary cursor-pointer flex items-center gap-3"
+              className="flex cursor-pointer items-center gap-3 p-3 hover:bg-primary"
             >
               <img src={p.image_url} className="w-10 h-10 object-contain" alt="" />
               <span>{p.name}</span>

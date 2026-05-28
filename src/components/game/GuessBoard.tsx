@@ -9,29 +9,29 @@ interface GuessBoardProps {
 
 export function GuessBoard({ guesses }: GuessBoardProps) {
   return (
-    <div className="w-full overflow-x-auto pb-6 no-scrollbar">
-      <div className="min-w-[700px]">
+    <div className="w-full overflow-x-auto pb-5 no-scrollbar">
+      <div className="min-w-[620px] sm:min-w-[700px]">
         {guesses.length > 0 && (
-          <div className="grid grid-cols-7 gap-3 mb-2 px-2 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">
+          <div className="mb-2 grid grid-cols-7 gap-2 px-2 text-center text-[10px] font-bold uppercase tracking-wide text-gray-500 sm:gap-3 sm:text-xs sm:tracking-widest">
             {COLUMN_HEADERS.map((h) => (
               <div key={h}>{h}</div>
             ))}
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <AnimatePresence initial={false}>
             {guesses.map((g) => (
               <motion.div
                 key={g.rowId}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-7 gap-3 h-20 items-center [perspective:1000px]"
+                className="grid h-16 grid-cols-7 items-center gap-2 [perspective:1000px] sm:h-20 sm:gap-3"
               >
-                <div className="bg-gray-800 flex items-center justify-center rounded-xl border border-gray-700 h-full">
+                <div className="flex h-full items-center justify-center rounded-xl border border-gray-700 bg-gray-800">
                   <img
                     src={g.pokemon.image_url}
-                    className="w-16 h-16 object-contain"
+                    className="h-12 w-12 object-contain sm:h-16 sm:w-16"
                     alt={g.pokemon.name}
                   />
                 </div>

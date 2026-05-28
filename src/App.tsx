@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { type Session } from "@supabase/supabase-js";
 import Game from './components/Game';
 import './index.css';
 import { Logo } from './components/Logo';
@@ -9,7 +10,7 @@ import { Footer } from "./components/Footer";
 
 function App() {
   const [gameState, setGameState] = useState<'HOME' | 'PLAYING'>('HOME');
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -24,20 +25,22 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)] text-white flex flex-col items-center">
+    <div className="min-h-screen bg-[var(--color-dark)] text-white flex flex-col items-center overflow-x-hidden">
       {session && (
-        <div className="absolute top-4 right-4 flex items-center gap-4 bg-gray-900/50 p-2 rounded-full border border-white/10">
+        <div className="w-full max-w-5xl px-4 pt-4 flex justify-end">
+        <div className="flex max-w-full items-center gap-3 rounded-full border border-white/10 bg-gray-900/70 p-2 shadow-lg backdrop-blur">
           <img 
             src={session.user.user_metadata?.avatar_url ?? ""} 
             alt="Avatar" 
-            className="w-8 h-8 rounded-full border border-primary"
+            className="h-8 w-8 shrink-0 rounded-full border border-primary bg-gray-800"
           />
           <button 
             onClick={signOut}
-            className="text-xs font-bold text-gray-400 hover:text-rose-400 transition-colors pr-2"
+            className="whitespace-nowrap pr-2 text-[10px] font-bold text-gray-400 transition-colors hover:text-rose-400 sm:text-xs"
           >
             CERRAR SESIÓN
           </button>
+        </div>
         </div>
       )}
 
@@ -47,7 +50,7 @@ function App() {
         }`}
       >
         {gameState === 'HOME' ? (
-          <div className="flex flex-col items-center space-y-8">
+          <div className="flex flex-col items-center space-y-8 px-4 text-center">
             <div className="flex flex-col items-center">
               <Logo />
               <Title />

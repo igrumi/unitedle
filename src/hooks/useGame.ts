@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import confetti from "canvas-confetti";
 import { type Pokemon, type ComparisonResult } from "../utils/gameLogic";
 import { supabase } from "../utils/supabaseClient";
@@ -29,7 +29,6 @@ export function useGame(user: { id: string } | null) {
 
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState<Pokemon[]>([]);
   const [winsCount, setWinsCount] = useState<number | null>(null);
   const [isWon, setIsWon] = useState(!!savedData.isWon);
   const [guesses, setGuesses] = useState<GuessRow[]>(savedData.guesses || []);
@@ -128,21 +127,18 @@ export function useGame(user: { id: string } | null) {
     claimSavedWin();
   }, [getDailyWinsCount, savedData, today, user?.id]);
 
-  useEffect(() => {
+  const suggestions = useMemo(() => {
     if (inputValue.trim().length === 0) {
-      setSuggestions([]);
-      return;
+      return [];
     }
 
-    const filtered = allPokemon.filter((p) => {
+    return allPokemon.filter((p) => {
       const matchesInput = p.name
         .toLowerCase()
         .includes(inputValue.toLowerCase());
       const isNotGuessed = !guesses.some((g) => g.pokemon.id === p.id);
       return matchesInput && isNotGuessed;
-    });
-
-    setSuggestions(filtered.slice(0, 5));
+    }).slice(0, 5);
   }, [inputValue, allPokemon, guesses]);
 
   const handleWin = async (
@@ -216,7 +212,6 @@ export function useGame(user: { id: string } | null) {
     }
 
     setInputValue("");
-    setSuggestions([]);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

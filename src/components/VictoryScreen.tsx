@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
+import { type User } from '@supabase/supabase-js';
 import { type Pokemon } from '../utils/gameLogic';
+import { type GuessRow } from './game/types';
 import { DiscordIcon } from './DiscordIcon';
 import { signInWithDiscord } from '../utils/supabaseClient';
 import { Leaderboard } from './Leaderboard';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface VictoryScreenProps {
-  guesses: any[];
+  guesses: GuessRow[];
   winner: Pokemon | null;
-  user: any;
+  user: User | null;
 }
 
 export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => {
@@ -35,8 +37,8 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
   const displayedImage = winner?.image_url || guesses[0]?.pokemon.image_url;
 
   return (
-    <div className="fixed inset-0 bg-gray-950/95 z-50 flex items-center justify-center p-4 backdrop-blur-md">
-      <div className="relative max-w-sm w-full min-h-[550px] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-950/95 p-4 backdrop-blur-md">
+      <div className="relative flex min-h-[min(550px,calc(100vh-2rem))] w-full max-w-sm items-center justify-center">
         <AnimatePresence mode="wait">
           {view === 'VICTORY' ? (
             /* CARA 1: VICTORIA */
@@ -45,7 +47,7 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -50, opacity: 0 }}
-              className="bg-gray-900 border-2 border-primary p-8 rounded-3xl text-center w-full shadow-2xl"
+              className="max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-2xl border-2 border-primary bg-gray-900 p-5 text-center shadow-2xl sm:p-8"
             >
               <h2 className="text-4xl font-black text-white mb-2">¡Victoria!</h2>
               <p className="text-gray-400">Hoy era: <span className="text-white font-bold">{displayedName}</span></p>
@@ -78,7 +80,7 @@ export const VictoryScreen = ({ guesses, winner, user }: VictoryScreenProps) => 
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -50, opacity: 0 }}
-              className="bg-gray-900 border-2 border-yellow-500/50 p-8 rounded-3xl text-center w-full shadow-2xl"
+              className="max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-2xl border-2 border-yellow-500/50 bg-gray-900 p-5 text-center shadow-2xl sm:p-8"
             >
               <Leaderboard />
               
