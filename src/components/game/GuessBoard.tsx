@@ -20,6 +20,11 @@ export function GuessBoard({ guesses }: GuessBoardProps) {
     t("board.evolutionStage"),
   ];
 
+  const getPokemonCellStyle = (isCorrect: boolean) =>
+    isCorrect
+      ? "border-emerald-400/70 bg-emerald-600/15 shadow-[0_0_24px_rgba(16,185,129,0.22)]"
+      : "border-rose-400/70 bg-rose-600/10 shadow-[0_0_18px_rgba(244,63,94,0.16)]";
+
   return (
     <div className="w-full overflow-x-auto pb-5 no-scrollbar">
       <div className="min-w-[620px] sm:min-w-[700px]">
@@ -42,12 +47,25 @@ export function GuessBoard({ guesses }: GuessBoardProps) {
                 animate={{ opacity: 1, y: 0 }}
                 className="grid h-16 grid-cols-[repeat(7,minmax(0,1fr))] items-center gap-2 [perspective:1000px] sm:h-20 sm:gap-3"
               >
-                <div className="flex h-full items-center justify-center rounded-xl border border-gray-700 bg-gray-800">
+                <div
+                  className={`relative flex h-full items-center justify-center rounded-xl border bg-gray-800 transition-colors ${getPokemonCellStyle(g.isCorrect === true)}`}
+                  aria-label={g.isCorrect === true ? t("board.exact") : t("board.notExact")}
+                  title={g.isCorrect === true ? t("board.exact") : t("board.notExact")}
+                >
                   <img
                     src={g.pokemon.image_url}
                     className="h-12 w-12 object-contain sm:h-16 sm:w-16"
                     alt={g.pokemon.name}
                   />
+                  <span
+                    className={`absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide sm:text-[9px] ${
+                      g.isCorrect === true
+                        ? "bg-emerald-400/20 text-emerald-100"
+                        : "bg-rose-400/20 text-rose-100"
+                    }`}
+                  >
+                    {g.isCorrect === true ? t("board.exact") : t("board.notExact")}
+                  </span>
                 </div>
 
                 {STAT_COLUMN_KEYS.map((key, i) => {

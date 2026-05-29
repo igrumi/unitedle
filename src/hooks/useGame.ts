@@ -270,6 +270,7 @@ export function useGame(user: { id: string } | null) {
       rowId: Date.now(),
       pokemon: selected,
       stats: statsOnly as unknown as ComparisonResult,
+      isCorrect: is_correct === true,
     };
     const updatedGuesses = [newGuess, ...guesses];
 

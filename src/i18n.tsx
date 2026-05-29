@@ -46,6 +46,8 @@ const translations = {
     },
     board: {
       pokemon: "Pokémon",
+      exact: "Exacto",
+      notExact: "✖",
       role: "Rol",
       evolves: "Evo",
       mega: "Mega",
@@ -119,6 +121,8 @@ const translations = {
     },
     board: {
       pokemon: "Pokémon",
+      exact: "Exact",
+      notExact: "✖",
       role: "Role",
       evolves: "Evo",
       mega: "Mega",
