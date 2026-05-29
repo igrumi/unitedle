@@ -4,6 +4,7 @@ import { type Pokemon, type ComparisonResult } from "../utils/gameLogic";
 import { supabase } from "../utils/supabaseClient";
 import { getChileTodayISO } from "../utils/date";
 import { type GuessRow } from "../components/game/types";
+import { useI18n } from "../i18n";
 
 interface SavedWinData {
   isWon?: boolean;
@@ -27,6 +28,7 @@ export function useGame(user: { id: string } | null) {
   const today = getChileTodayISO();
   const savedData = loadSavedWinData(today);
   const syncKeyRef = useRef<string | null>(null);
+  const { t } = useI18n();
 
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -248,7 +250,7 @@ export function useGame(user: { id: string } | null) {
 
   const handleGuess = async (selected: Pokemon) => {
     if (guesses.some((g) => g.pokemon.id === selected.id)) {
-      alert("¡Ya intentaste con este Pokémon!");
+      alert(t("game.duplicateGuess"));
       return;
     }
 
@@ -262,7 +264,7 @@ export function useGame(user: { id: string } | null) {
     }
 
     const rawData = data as Record<string, unknown>;
-    const { target_id, ...statsOnly } = rawData;
+    const { target_id, is_correct, ...statsOnly } = rawData;
 
     const newGuess: GuessRow = {
       rowId: Date.now(),
@@ -273,11 +275,7 @@ export function useGame(user: { id: string } | null) {
 
     setGuesses(updatedGuesses);
 
-    if (
-      Object.values(statsOnly).every(
-        (s) => (s as { status: string }).status === "correct",
-      )
-    ) {
+    if (is_correct === true) {
       handleWin(target_id as number, selected, updatedGuesses);
     }
 
