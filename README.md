@@ -19,6 +19,7 @@ El juego también tiene un incentivo social: quienes inician sesión con Discord
 - Registro local de la victoria del día para conservar el estado al volver.
 - Ranking diario con intentos y perfil de Discord.
 - Flujo para guardar en ranking después de ganar sin haber iniciado sesión.
+- Interfaz disponible en español e inglés, con metadata actualizada según el idioma elegido.
 
 ## Tecnologías
 

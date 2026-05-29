@@ -1,4 +1,5 @@
 import { type Pokemon } from "../../utils/gameLogic";
+import { useI18n } from "../../i18n";
 
 interface PokemonGuessFormProps {
   inputValue: string;
@@ -15,12 +16,14 @@ export function PokemonGuessForm({
   onSelectPokemon,
   onSubmit,
 }: PokemonGuessFormProps) {
+  const { t } = useI18n();
+
   return (
     <form onSubmit={onSubmit} className="relative mb-8 sm:mb-12">
       <input
         value={inputValue}
         onChange={(e) => onInputChange(e.target.value)}
-        placeholder="Adivina el Pokémon del día..."
+        placeholder={t("game.inputPlaceholder")}
         className="w-full rounded-2xl border-2 border-primary bg-gray-900 p-4 text-base text-white outline-none transition-all focus:ring-4 focus:ring-primary/20 sm:p-5"
       />
 
