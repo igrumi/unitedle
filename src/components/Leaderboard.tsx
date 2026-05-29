@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { fetchTodayLeaderboard } from "../utils/leaderboard";
 import { type LeaderboardEntry } from "../types/leaderboard";
+import { useI18n } from "../i18n";
 
 const topRankBadges = [
-  { src: "/rank_legend.webp", alt: "Rango Legend" },
-  { src: "/rank_master.webp", alt: "Rango Master" },
-  { src: "/rank_ultra.webp", alt: "Rango Ultra" },
-];
+  { src: "/rank_legend.webp", altKey: "leaderboard.rankLegend" },
+  { src: "/rank_master.webp", altKey: "leaderboard.rankMaster" },
+  { src: "/rank_ultra.webp", altKey: "leaderboard.rankUltra" },
+] as const;
 
 export const Leaderboard = () => {
   const [topEntries, setTopEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
 
   useEffect(() => {
     const load = async () => {
@@ -24,7 +26,7 @@ export const Leaderboard = () => {
   if (loading) {
     return (
       <div className="p-8 text-center text-gray-500 animate-pulse">
-        Cargando campeones...
+        {t("leaderboard.loading")}
       </div>
     );
   }
@@ -32,7 +34,7 @@ export const Leaderboard = () => {
   return (
     <div className="w-full text-left">
       <h3 className="mb-5 flex items-center gap-2 text-lg font-black uppercase tracking-tight text-yellow-500 sm:mb-6 sm:text-xl">
-        <span>🏆</span> Top 5 de Hoy
+        <span>🏆</span> {t("leaderboard.title")}
       </h3>
       <div className="space-y-3">
         {topEntries.map((entry, i) => (
@@ -44,7 +46,7 @@ export const Leaderboard = () => {
               {topRankBadges[i] ? (
                 <img
                   src={topRankBadges[i].src}
-                  alt={topRankBadges[i].alt}
+                  alt={t(topRankBadges[i].altKey)}
                   className="h-8 w-8 shrink-0 object-contain"
                 />
               ) : (
@@ -60,7 +62,7 @@ export const Leaderboard = () => {
                 />
               )}
               <span className="min-w-0 max-w-[9rem] truncate text-sm font-bold uppercase text-gray-200 sm:max-w-[140px]">
-                {entry.user_name?.trim() || "Anónimo"}
+                {entry.user_name?.trim() || t("record.anonymous")}
               </span>
             </div>
             <div className="shrink-0 text-right">
@@ -68,14 +70,14 @@ export const Leaderboard = () => {
                 {entry.attempts}
               </span>
               <span className="text-[8px] uppercase text-gray-500">
-                Intentos
+                {t("leaderboard.attempts")}
               </span>
             </div>
           </div>
         ))}
         {topEntries.length === 0 && (
           <p className="py-4 text-center italic text-gray-600">
-            Aún no hay registros hoy.
+            {t("leaderboard.empty")}
           </p>
         )}
       </div>

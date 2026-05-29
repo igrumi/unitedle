@@ -5,6 +5,7 @@ import { Logo } from "../Logo";
 import { Title } from "../Title";
 import { DiscordIcon } from "../DiscordIcon";
 import { DailyRecord } from "./DailyRecord";
+import { useI18n } from "../../i18n";
 
 interface GameHeaderProps {
   user: unknown;
@@ -19,12 +20,21 @@ export function GameHeader({
   winsCount,
   onOpenLeaderboard,
 }: GameHeaderProps) {
+  const { t } = useI18n();
+
+  const winsText =
+    winsCount === 0
+      ? t("game.firstWin")
+      : t(winsCount === 1 ? "game.winsSingular" : "game.winsPlural", {
+          count: winsCount ?? 0,
+        });
+
   return (
     <div className="relative mb-7 pt-1 text-center sm:mb-10">
       <button
         onClick={onOpenLeaderboard}
-        aria-label="Ver ranking"
-        title="Ver ranking"
+        aria-label={t("game.ranking")}
+        title={t("game.ranking")}
         className="absolute left-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-500/25 bg-yellow-500/10 text-yellow-400 shadow-lg transition-all hover:bg-yellow-500 hover:text-black active:scale-95 sm:h-11 sm:w-11"
       >
         <Trophy size={15} />
@@ -33,8 +43,8 @@ export function GameHeader({
       {!user && !isWon && (
         <button
           onClick={signInWithDiscord}
-          aria-label="Iniciar sesión con Discord"
-          title="Iniciar sesión con Discord"
+          aria-label={t("game.saveStreak")}
+          title={t("game.saveStreak")}
           className="group absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#5865F2] text-white shadow-lg transition-all hover:bg-[#4752C4] hover:shadow-[#5865F2]/30 active:scale-95 sm:h-11 sm:w-11"
         >
           <DiscordIcon className="h-4 w-4 transition-transform group-hover:rotate-12" />
@@ -64,9 +74,7 @@ export function GameHeader({
               animate={{ opacity: 1, y: 0 }}
               className="text-center text-sm font-bold leading-snug text-emerald-400 sm:text-base"
             >
-              {winsCount === 0
-                ? "¡Sé el primero en adivinar el Pokémon de hoy!"
-                : `¡${winsCount} ${winsCount === 1 ? "persona ha" : "personas han"} adivinado el Pokémon de hoy!`}
+              {winsText}
             </motion.p>
           )}
         </AnimatePresence>

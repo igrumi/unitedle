@@ -1,16 +1,19 @@
+import { useI18n } from "../i18n";
+
 interface LogoProps {
-  className?: string; // Por si quieres añadir estilos extra como margen
+  className?: string;
 }
 
 export const Logo = ({ className }: LogoProps) => {
+  const { t } = useI18n();
+
   return (
     <div className={`flex justify-center items-center ${className}`}>
-      <img 
-        src="/unitedle_logo.png" // Asegúrate de tener el archivo en tu carpeta /public del nuevo proyecto
-        alt="Unitedle Logo"
-        // Este es el tamaño responsivo que definimos al final (compacto)
+      <img
+        src="/unitedle_logo.png"
+        alt={t("metadata.imageAlt")}
         className="w-16 md:w-20 lg:w-24 h-auto object-contain transition-all duration-300"
-        loading="eager" // Al ser el logo, queremos que cargue rápido
+        loading="eager"
       />
     </div>
   );

@@ -4,14 +4,14 @@ export interface GuessRow {
   rowId: number;
   pokemon: Pokemon;
   stats: ComparisonResult;
+  isCorrect: boolean;
 }
 
-export const COLUMN_HEADERS = [
-  "Pokémon",
-  "Rol",
-  "Evo",
-  "Mega",
-  "Alcance",
-  "Año lanzamiento",
-  "Etapa evolutiva",
-] as const;
+export const STAT_COLUMN_KEYS = [
+  "role",
+  "evolves",
+  "has_mega",
+  "attack_range",
+  "release_year",
+  "evolution_stage",
+] as const satisfies readonly (keyof ComparisonResult)[];

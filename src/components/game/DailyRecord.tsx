@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchTodayLeaderboard } from "../../utils/leaderboard";
 import { type LeaderboardEntry } from "../../types/leaderboard";
+import { useI18n } from "../../i18n";
 
 interface DailyRecordProps {
   refreshKey?: number | null;
@@ -12,6 +13,7 @@ const recordTextClass =
 export function DailyRecord({ refreshKey }: DailyRecordProps) {
   const [record, setRecord] = useState<LeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
 
   useEffect(() => {
     let cancelled = false;
@@ -34,29 +36,27 @@ export function DailyRecord({ refreshKey }: DailyRecordProps) {
   if (loading) {
     return (
       <p className={recordTextClass}>
-        Récord de hoy:{" "}
+        {t("record.loading")}{" "}
         <span className="inline-block h-3 w-24 rounded bg-white/10 align-middle animate-pulse" />
       </p>
     );
   }
 
   if (!record) {
-    return (
-      <p className={recordTextClass}>
-        Aún no hay récord hoy - ¡sé el primero!
-      </p>
-    );
+    return <p className={recordTextClass}>{t("record.empty")}</p>;
   }
 
   const attemptsLabel =
-    record.attempts === 1 ? "1 intento" : `${record.attempts} intentos`;
-  const playerName = record.user_name?.trim() || "Anónimo";
+    record.attempts === 1
+      ? t("record.attemptSingular")
+      : t("record.attemptPlural", { count: record.attempts });
+  const playerName = record.user_name?.trim() || t("record.anonymous");
 
   return (
     <p className={recordTextClass}>
-      Récord de hoy:{" "}
-      <span className="font-bold text-yellow-500">{attemptsLabel}</span> por{" "}
-      <span className="text-white">{playerName}</span>
+      {t("record.label")}{" "}
+      <span className="font-bold text-yellow-500">{attemptsLabel}</span>{" "}
+      {t("record.by")} <span className="text-white">{playerName}</span>
     </p>
   );
 }
