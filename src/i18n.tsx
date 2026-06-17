@@ -23,6 +23,11 @@ const translations = {
       signInDiscord: "Iniciar sesión con Discord",
       signedInAs: "SESIÓN INICIADA COMO",
       signOut: "CERRAR SESIÓN",
+      accountMenu: "Menú de cuenta",
+      signOutConfirmTitle: "¿Cerrar sesión?",
+      signOutConfirmBody:
+        "Tu progreso local seguirá en este dispositivo, pero tendrás que iniciar sesión otra vez para guardar en el ranking.",
+      cancel: "Cancelar",
       userFallback: "USUARIO",
       languageLabel: "Idioma",
     },
@@ -47,6 +52,9 @@ const translations = {
     board: {
       pokemon: "Pokémon",
       exact: "Exacto",
+      almost: "¡Casi!",
+      almostMessage:
+        "Ese Pokémon comparte todas las características del Pokémon de hoy, pero Unitedle necesita que adivines el Pokémon exacto.",
       notExact: "✖",
       role: "Rol",
       evolves: "Evo",
@@ -98,6 +106,11 @@ const translations = {
       signInDiscord: "Sign in with Discord",
       signedInAs: "SIGNED IN AS",
       signOut: "SIGN OUT",
+      accountMenu: "Account menu",
+      signOutConfirmTitle: "Sign out?",
+      signOutConfirmBody:
+        "Your local progress will stay on this device, but you will need to sign in again to save to the ranking.",
+      cancel: "Cancel",
       userFallback: "USER",
       languageLabel: "Language",
     },
@@ -122,6 +135,9 @@ const translations = {
     board: {
       pokemon: "Pokémon",
       exact: "Exact",
+      almost: "Close!",
+      almostMessage:
+        "That Pokémon shares every clue with today's Pokémon, but Unitedle needs the exact Pokémon.",
       notExact: "✖",
       role: "Role",
       evolves: "Evo",
