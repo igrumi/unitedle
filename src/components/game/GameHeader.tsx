@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { type User } from "@supabase/supabase-js";
 import { Trophy } from "lucide-react";
-import { signInWithDiscord } from "../../utils/supabaseClient";
+import { signInWithDiscord, signOut } from "../../utils/supabaseClient";
 import { Logo } from "../Logo";
 import { Title } from "../Title";
 import { DiscordIcon } from "../DiscordIcon";
@@ -8,7 +9,7 @@ import { DailyRecord } from "./DailyRecord";
 import { useI18n } from "../../i18n";
 
 interface GameHeaderProps {
-  user: unknown;
+  user: User | null;
   isWon: boolean;
   winsCount: number | null;
   onOpenLeaderboard: () => void;
@@ -28,6 +29,9 @@ export function GameHeader({
       : t(winsCount === 1 ? "game.winsSingular" : "game.winsPlural", {
           count: winsCount ?? 0,
         });
+  const avatarUrl = user?.user_metadata?.avatar_url;
+  const fallbackInitial =
+    user?.user_metadata?.full_name?.charAt(0) ?? user?.email?.charAt(0) ?? "?";
 
   return (
     <div className="relative mb-7 pt-1 text-center sm:mb-10">
@@ -40,7 +44,26 @@ export function GameHeader({
         <Trophy size={15} />
       </button>
 
-      {!user && !isWon && (
+      {user ? (
+        <button
+          onClick={signOut}
+          aria-label={t("app.signOut")}
+          title={t("app.signOut")}
+          className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-slate-900/80 text-white shadow-lg backdrop-blur transition-all hover:border-rose-300/60 hover:shadow-rose-500/20 active:scale-95 sm:h-11 sm:w-11"
+        >
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt=""
+              className="h-8 w-8 rounded-full border border-white/10 bg-gray-800 object-cover sm:h-9 sm:w-9"
+            />
+          ) : (
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-gray-800 text-xs font-black uppercase text-gray-300 sm:h-9 sm:w-9">
+              {fallbackInitial}
+            </span>
+          )}
+        </button>
+      ) : !isWon ? (
         <button
           onClick={signInWithDiscord}
           aria-label={t("game.saveStreak")}
@@ -49,7 +72,7 @@ export function GameHeader({
         >
           <DiscordIcon className="h-4 w-4 transition-transform group-hover:rotate-12" />
         </button>
-      )}
+      ) : null}
 
       <Logo className="mb-4" />
 

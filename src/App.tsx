@@ -35,7 +35,7 @@ function App() {
         <LanguageToggle />
       </div>
 
-      {session && (
+      {session && gameState === "HOME" && (
         <div className="w-full max-w-5xl px-4 pt-4 flex justify-end">
           <div className="flex max-w-full items-center gap-3 rounded-full border border-white/10 bg-gray-900/70 p-2 shadow-lg backdrop-blur">
             <img
