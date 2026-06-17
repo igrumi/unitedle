@@ -198,14 +198,14 @@ export function useGame(user: { id: string } | null) {
   }, [allPokemon, savedData.isWon, today, user?.id]);
 
   const suggestions = useMemo(() => {
-    if (inputValue.trim().length === 0) {
+    const normalizedInput = inputValue.trim().toLowerCase();
+
+    if (normalizedInput.length === 0) {
       return [];
     }
 
     return allPokemon.filter((p) => {
-      const matchesInput = p.name
-        .toLowerCase()
-        .includes(inputValue.toLowerCase());
+      const matchesInput = p.name.toLowerCase().startsWith(normalizedInput);
       const isNotGuessed = !guesses.some((g) => g.pokemon.id === p.id);
       return matchesInput && isNotGuessed;
     }).slice(0, 5);
