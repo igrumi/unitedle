@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { fetchTodayLeaderboard } from "../utils/leaderboard";
-import { type LeaderboardEntry } from "../types/leaderboard";
-import { useI18n } from "../i18n";
+import { fetchTodayLeaderboard } from "../../utils/leaderboard";
+import { type LeaderboardEntry } from "../../types/leaderboard";
+import { useI18n } from "../../i18n";
 
 const topRankBadges = [
   { src: "/rank_legend.webp", altKey: "leaderboard.rankLegend" },

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { type Session } from "@supabase/supabase-js";
-import Game from "./components/Game";
+import Game from "./components/game/Game";
 import "./index.css";
-import { Logo } from "./components/Logo";
-import { Title } from "./components/Title";
+import { Logo } from "./components/ui/Logo";
+import { Title } from "./components/ui/Title";
 import { supabase, signInWithDiscord, signOut } from "./utils/supabaseClient";
-import { DiscordIcon } from "./components/DiscordIcon";
-import { Footer } from "./components/Footer";
-import { LanguageToggle } from "./components/LanguageToggle";
+import { DiscordIcon } from "./components/ui/DiscordIcon";
+import { Footer } from "./components/ui/Footer";
+import { LanguageToggle } from "./components/ui/LanguageToggle";
 import { useI18n } from "./i18n";
 
 function App() {

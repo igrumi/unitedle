@@ -1,5 +1,5 @@
 import { Languages } from "lucide-react";
-import { useI18n, type Language } from "../i18n";
+import { useI18n, type Language } from "../../i18n";
 
 const languageOptions: { value: Language; label: string }[] = [
   { value: "es", label: "ES" },
