@@ -8,7 +8,7 @@ interface DailyRecordProps {
 }
 
 const recordTextClass =
-  "mt-4 px-3 text-center text-[9px] uppercase leading-relaxed tracking-[0.18em] text-gray-500 sm:text-[10px] sm:tracking-[0.3em]";
+  "mt-3 px-3 text-center text-[10px] uppercase leading-relaxed tracking-[0.2em] text-slate-400 sm:text-[11px] sm:tracking-[0.25em]";
 
 export function DailyRecord({ refreshKey }: DailyRecordProps) {
   const [record, setRecord] = useState<LeaderboardEntry | null>(null);
