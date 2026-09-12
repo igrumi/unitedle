@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { type User } from "@supabase/supabase-js";
 import { LogOut, ShieldAlert, Trophy, X } from "lucide-react";
 import { signInWithDiscord, signOut } from "../../utils/supabaseClient";
-import { Logo } from "../Logo";
-import { Title } from "../Title";
-import { DiscordIcon } from "../DiscordIcon";
+import { Logo } from "../ui/Logo";
+import { Title } from "../ui/Title";
+import { DiscordIcon } from "../ui/DiscordIcon";
 import { DailyRecord } from "./DailyRecord";
 import { useI18n } from "../../i18n";
 

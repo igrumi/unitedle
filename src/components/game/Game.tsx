@@ -1,11 +1,11 @@
 import { VictoryScreen } from "./VictoryScreen";
 import { type User } from "@supabase/supabase-js";
-import { useGame } from "../hooks/useGame";
-import { GameHeader } from "./game/GameHeader";
-import { PokemonGuessForm } from "./game/PokemonGuessForm";
-import { GuessBoard } from "./game/GuessBoard";
-import { LeaderboardModal } from "./game/LeaderboardModal";
-import { StatLegend } from "./game/StatLegend";
+import { useGame } from "../../hooks/useGame";
+import { GameHeader } from "./GameHeader";
+import { PokemonGuessForm } from "./PokemonGuessForm";
+import { GuessBoard } from "./GuessBoard";
+import { LeaderboardModal } from "./LeaderboardModal";
+import { StatLegend } from "./StatLegend";
 
 const Game = ({ user }: { user: User | null }) => {
   const {

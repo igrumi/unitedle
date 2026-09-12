@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Leaderboard } from "../Leaderboard";
+import { Leaderboard } from "./Leaderboard";
 
 interface LeaderboardModalProps {
   onClose: () => void;

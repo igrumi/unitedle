@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { type User } from "@supabase/supabase-js";
-import { type Pokemon } from "../utils/gameLogic";
-import { type GuessRow } from "./game/types";
-import { DiscordIcon } from "./DiscordIcon";
-import { signInWithDiscord } from "../utils/supabaseClient";
+import { type Pokemon } from "../../types/pokemon";
+import { type GuessRow } from "../../types/game";
+import { DiscordIcon } from "../ui/DiscordIcon";
+import { signInWithDiscord } from "../../utils/supabaseClient";
 import { Leaderboard } from "./Leaderboard";
 import { AnimatePresence, motion } from "framer-motion";
-import { useI18n } from "../i18n";
+import { useI18n } from "../../i18n";
 
 interface VictoryScreenProps {
   guesses: GuessRow[];
