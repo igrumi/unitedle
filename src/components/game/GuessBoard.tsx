@@ -32,14 +32,14 @@ export function GuessBoard({ guesses }: GuessBoardProps) {
 
   const getPokemonCellStyle = (state: "exact" | "almost" | "wrong") => {
     if (state === "exact") {
-      return "border-emerald-400/70 bg-emerald-600/15";
+      return "border-emerald-400/60 bg-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.25)] backdrop-blur-md";
     }
 
     if (state === "almost") {
-      return "border-amber-300 bg-amber-400/15 ring-2 ring-amber-300/45";
+      return "border-amber-300/80 bg-amber-400/20 ring-2 ring-amber-300/50 shadow-[0_0_20px_rgba(245,158,11,0.25)] backdrop-blur-md";
     }
 
-    return "border-rose-400/70 bg-rose-600/10";
+    return "border-rose-500/40 bg-rose-600/15 backdrop-blur-md";
   };
 
   const getPokemonCellLabel = (state: "exact" | "almost" | "wrong") => {
@@ -59,7 +59,7 @@ export function GuessBoard({ guesses }: GuessBoardProps) {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-left text-xs font-bold leading-relaxed text-amber-100 sm:text-sm"
+              className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-left text-xs font-bold leading-relaxed text-amber-100 sm:text-sm shadow-[0_0_20px_rgba(245,158,11,0.15)] backdrop-blur-md"
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-300 text-slate-950">
                 <Sparkles size={16} />
@@ -73,9 +73,12 @@ export function GuessBoard({ guesses }: GuessBoardProps) {
         </AnimatePresence>
 
         {guesses.length > 0 && (
-          <div className="mb-2 grid grid-cols-[repeat(7,minmax(0,1fr))] gap-2 px-2 text-center text-[10px] font-bold uppercase tracking-wide text-gray-500 sm:gap-3 sm:text-xs sm:tracking-widest">
+          <div className="mb-3 grid grid-cols-[repeat(7,minmax(0,1fr))] gap-2 px-1 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:gap-3 sm:text-xs sm:tracking-widest">
             {columnHeaders.map((h) => (
-              <div key={h} className="flex min-h-8 items-end justify-center leading-tight">
+              <div
+                key={h}
+                className="flex min-h-9 items-center justify-center rounded-xl bg-white/[0.03] border border-white/5 py-1 px-1 text-center font-bold text-slate-400 shadow-sm backdrop-blur-xs"
+              >
                 {h}
               </div>
             ))}
@@ -92,10 +95,10 @@ export function GuessBoard({ guesses }: GuessBoardProps) {
                   key={g.rowId}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="grid h-16 grid-cols-[repeat(7,minmax(0,1fr))] items-center gap-2 [perspective:1000px] sm:h-20 sm:gap-3"
+                  className="grid h-16 grid-cols-[repeat(7,minmax(0,1fr))] items-center gap-2 rounded-2xl bg-white/[0.02] border border-white/5 p-1.5 shadow-lg backdrop-blur-sm [perspective:1000px] sm:h-20 sm:gap-3"
                 >
                   <motion.div
-                    className={`relative flex h-full items-center justify-center overflow-hidden rounded-xl border bg-gray-800 transition-colors ${getPokemonCellStyle(pokemonCellState)}`}
+                    className={`relative flex h-full items-center justify-center overflow-hidden rounded-xl border transition-all duration-300 ${getPokemonCellStyle(pokemonCellState)}`}
                     aria-label={getPokemonCellLabel(pokemonCellState)}
                     title={getPokemonCellLabel(pokemonCellState)}
                   >
