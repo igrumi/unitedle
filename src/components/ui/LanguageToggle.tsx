@@ -11,20 +11,20 @@ export function LanguageToggle() {
 
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-gray-950/80 p-1 text-[10px] font-black text-gray-400 shadow-lg shadow-black/20 backdrop-blur transition-opacity hover:opacity-100 sm:opacity-80"
+      className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/70 p-1 text-[11px] font-bold text-slate-400 shadow-xl shadow-black/40 backdrop-blur-md transition-all hover:border-white/20"
       aria-label={t("app.languageLabel")}
       title={t("app.languageLabel")}
     >
-      <Languages size={13} className="ml-1.5 text-gray-500" />
+      <Languages size={14} className="ml-2 text-slate-400" />
       {languageOptions.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => setLanguage(option.value)}
-          className={`rounded-full px-2.5 py-1 transition-colors ${
+          className={`rounded-full px-3 py-1 text-xs font-bold transition-all ${
             language === option.value
-              ? "bg-white text-gray-950"
-              : "text-gray-400 hover:text-white"
+              ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md shadow-purple-600/30"
+              : "text-slate-400 hover:text-white"
           }`}
         >
           {option.label}
