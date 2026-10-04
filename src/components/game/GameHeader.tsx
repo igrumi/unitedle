@@ -82,9 +82,9 @@ export function GameHeader({
         onClick={onOpenLeaderboard}
         aria-label={t("game.ranking")}
         title={t("game.ranking")}
-        className="absolute left-0 top-0 inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all hover:bg-amber-500 hover:text-black hover:scale-105 active:scale-95 backdrop-blur-md"
+        className="absolute left-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-500/25 bg-yellow-500/10 text-yellow-400 shadow-lg transition-all hover:bg-yellow-500 hover:text-black active:scale-95 sm:h-11 sm:w-11"
       >
-        <Trophy size={16} />
+        <Trophy size={15} />
       </button>
 
       {user ? (
@@ -96,16 +96,16 @@ export function GameHeader({
             title={t("app.accountMenu")}
             aria-expanded={isProfileMenuOpen}
             aria-haspopup="menu"
-            className="inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-slate-900/80 text-white shadow-lg transition-all hover:border-purple-400/40 hover:shadow-[0_0_15px_rgba(124,58,237,0.3)] active:scale-95 backdrop-blur-md"
+            className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-gray-900/80 text-white shadow-lg transition-all hover:border-primary active:scale-95 sm:h-11 sm:w-11"
           >
             {avatarUrl ? (
               <img
                 src={avatarUrl}
                 alt=""
-                className="h-8 w-8 rounded-xl border border-white/10 bg-gray-800 object-cover sm:h-9 sm:w-9"
+                className="h-8 w-8 rounded-full border border-white/10 bg-gray-800 object-cover sm:h-9 sm:w-9"
               />
             ) : (
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-gray-800 text-xs font-black uppercase text-gray-300 sm:h-9 sm:w-9">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-gray-800 text-xs font-black uppercase text-gray-300 sm:h-9 sm:w-9">
                 {fallbackInitial}
               </span>
             )}
@@ -120,7 +120,7 @@ export function GameHeader({
                 transition={{ duration: 0.16, ease: "easeOut" }}
                 role="menu"
                 aria-label={t("app.accountMenu")}
-                className="absolute right-0 top-12 w-56 overflow-hidden rounded-3xl border border-white/10 bg-slate-950/96 text-left shadow-[0_24px_60px_rgba(0,0,0,0.42)] backdrop-blur-xl sm:top-13"
+                className="absolute right-0 top-12 w-56 overflow-hidden rounded-2xl border border-white/10 bg-gray-900 text-left shadow-2xl sm:top-13"
               >
                 <div className="border-b border-white/8 px-4 py-3">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
@@ -135,7 +135,7 @@ export function GameHeader({
                   <button
                     type="button"
                     onClick={openSignOutConfirm}
-                    className="flex w-full items-center gap-3 rounded-2xl border border-rose-500/10 bg-rose-500/8 px-3 py-3 text-left transition-colors hover:border-rose-400/20 hover:bg-rose-500/14"
+                    className="flex w-full items-center gap-3 rounded-xl border border-rose-500/10 bg-rose-500/8 px-3 py-3 text-left transition-colors hover:border-rose-400/20 hover:bg-rose-500/14"
                   >
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-500/15 text-rose-200">
                       <LogOut size={15} />
@@ -159,7 +159,7 @@ export function GameHeader({
           onClick={signInWithDiscord}
           aria-label={t("game.saveStreak")}
           title={t("game.saveStreak")}
-          className="group absolute right-0 top-0 inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl border border-[#5865F2]/40 bg-[#5865F2]/20 text-[#5865F2] hover:text-white shadow-lg transition-all hover:bg-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.4)] hover:scale-105 active:scale-95 backdrop-blur-md"
+          className="group absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#5865F2] text-white shadow-lg transition-all hover:bg-[#4752C4] active:scale-95 sm:h-11 sm:w-11"
         >
           <DiscordIcon className="h-4 w-4 transition-transform group-hover:rotate-12" />
         </button>
@@ -182,17 +182,14 @@ export function GameHeader({
               className="h-5 w-48 rounded-full bg-emerald-400/20 animate-pulse"
             />
           ) : (
-            <motion.div
+            <motion.p
               key="count"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-sm"
+              className="text-center text-sm font-bold leading-snug text-emerald-400 sm:text-base"
             >
-              <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-              <p className="text-center text-xs sm:text-sm font-bold leading-snug text-emerald-300">
-                {winsText}
-              </p>
-            </motion.div>
+              {winsText}
+            </motion.p>
           )}
         </AnimatePresence>
       </div>
