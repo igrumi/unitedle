@@ -2,16 +2,17 @@ import { type StatComparison } from "../../utils/gameLogic";
 
 export function getBoxStyle(status: StatComparison["status"]): string {
   const baseStyle =
-    "flex h-full items-center justify-center gap-1.5 rounded-xl border px-2 text-center text-xs font-bold leading-tight transition-all duration-300 backdrop-blur-md sm:text-sm";
+    "flex h-full items-center justify-center gap-1 rounded-xl border border-white/10 px-1 text-center text-xs font-bold leading-tight shadow-md transition-colors sm:text-sm";
 
   switch (status) {
     case "correct":
-      return `${baseStyle} border-emerald-400/40 bg-emerald-500/20 text-emerald-200 shadow-[0_0_16px_rgba(16,185,129,0.2)]`;
+      return `${baseStyle} bg-emerald-600 text-white`;
     case "wrong":
-      return `${baseStyle} border-rose-500/30 bg-rose-500/15 text-rose-200 shadow-[0_0_12px_rgba(244,63,94,0.1)]`;
+      return `${baseStyle} bg-rose-600 text-white`;
     case "higher":
     case "lower":
-      return `${baseStyle} border-amber-400/40 bg-amber-500/20 text-amber-200 shadow-[0_0_16px_rgba(245,158,11,0.2)]`;
+      return `${baseStyle} bg-amber-500 text-white`;
   }
 }
+
 
