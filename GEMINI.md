@@ -100,20 +100,36 @@ For multi-step implementations, state a clear verification loop:
 
 ---
 
-## 6. Git Workflow & Safety (Worktrees & Branch Isolation)
+## 6. Git Workflow, Worktrees & Post-Merge Cleanup
 
-**Zero automated pushes. Zero automated merges. Total branch isolation.**
+**Zero automated pushes. Zero automated merges. Total worktree isolation. Immediate post-merge cleanup.**
 
-- **No automatic push or merge**:
-  - NEVER execute `git push` or `git merge` automatically or unsolicited.
-  - Pushing to remote repositories or merging branches requires explicit user request and review.
-- **Never work or push directly to `main`**:
-  - The `main` branch is protected. Direct commits or pushes to `main` are strictly prohibited.
-  - All development must happen on dedicated, descriptive topic branches (e.g., `feature/<topic>`, `fix/<issue>`, `refactor/<name>`).
-- **Mandatory Git Worktrees**:
-  - Always develop within an isolated **git worktree** (`git worktree add ...`) associated with the specific feature/task branch.
-  - Never dirty or mutate the primary working tree while developing features or spikes.
-  - When the task is verified and complete, clean up temporary worktrees cleanly (`git worktree remove ...`) and leave branch integration to the user or explicit review.
+- **Strictly Protected Branches (`main`, `develop`, staging/production)**:
+  - `main`, `master`, `develop`, and release branches are strictly protected.
+  - NEVER commit directly to `main` or `develop`.
+  - NEVER push directly to `main` or `develop` unless explicitly instructed by the user.
+- **Mandatory Isolated Git Worktrees for ANY Work**:
+  - Whatever the scope—`feature`, `fix`, `bug`, `refactor`, `chore`, or experimental spike—work MUST ALWAYS start inside a **new isolated git worktree** (`git worktree add ...`) linked to a dedicated, descriptive branch (e.g., `feature/<name>`, `fix/<issue>`, `refactor/<target>`).
+  - NEVER mutate, dirty, or create changes directly within the root repository working tree.
+- **No Automatic Push or Merge**:
+  - NEVER run `git push` or `git merge` without explicit user request or review confirmation.
+- **Mandatory Post-Merge / Post-Task Cleanup Protocol**:
+  - Once a branch is merged into `main` or `develop` (or when a feature is completed and integrated):
+    1. **Worktree Removal**: Cleanly delete the associated worktree:
+       ```bash
+       git worktree remove <path-to-worktree>
+       ```
+    2. **Local Branch Deletion**: Delete the merged local branch to prevent accumulating orphan branches:
+       ```bash
+       git branch -d <branch-name>
+       ```
+    3. **Remote Branch Cleanup & Prune**: If the remote branch was merged into remote `main`/`develop`, delete the remote branch (when authorized) and prune stale tracking references:
+       ```bash
+       git push origin --delete <branch-name>  # when applicable
+       git fetch --prune origin
+       ```
+    4. **Worktree Pruning**: Run `git worktree prune` if needed to keep git internal metadata clean.
+  - Always leave the git workspace free of obsolete branches, stale tracking refs, and discarded worktrees ("Zero Waste / Clean Repo").
 
 ---
 
@@ -124,4 +140,5 @@ These guidelines are successful when:
 2. Every bug fix and feature is protected by automated tests.
 3. Code is simple, readable, and free of speculative abstractions.
 4. Ambiguities are raised and clarified before writing code, not after making mistakes.
-5. `main` is protected: no direct pushes, no automatic pushes/merges, and all feature work is isolated in dedicated git worktrees.
+5. `main` and `develop` are protected: no direct commits/pushes, mandatory worktree isolation for any change (fix, feature, refactor), and mandatory immediate cleanup of worktrees and branches upon merge.
+
